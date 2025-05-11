@@ -7,6 +7,6 @@ export interface Product {
     description: string;
 }
 
-export type ProductPageProps  ={
-    params: { id: string };
+export interface ProductPageProps {
+   id: string;
 }

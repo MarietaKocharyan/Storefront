@@ -1,12 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig = {
+export default {
     images: {
-        domains: ['fakestoreapi.com'],
-    },
-    experimental: {
-        serverActions: true,
-    },
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'fakestoreapi.com',
+                pathname: '/img/**'
+            }
+        ]
+    }
 };
-
-export default nextConfig;

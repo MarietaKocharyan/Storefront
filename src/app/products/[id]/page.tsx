@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button';
 import {ProductPageProps} from "@/types/product";
 import {fetchProductData} from "@/lib/api/products";
 
-async function generateMetadata({ params }: ProductPageProps) {
-    const product = await fetchProductData(params.id);
+export async function generateMetadata({ params }: {params :  Promise<ProductPageProps>}) {
+    const { id } = await params;
+
+    const product = await fetchProductData(id);
 
     if (!product) return {};
 
@@ -22,7 +24,7 @@ async function generateMetadata({ params }: ProductPageProps) {
             description: product.description,
             images: [
                 {
-                    url: `${baseUrl}/api/og/${params.id}`,
+                    url: `${baseUrl}/api/og/${id}`,
                     width: 1200,
                     height: 630,
                 },
@@ -31,7 +33,7 @@ async function generateMetadata({ params }: ProductPageProps) {
     };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params }: {params : Promise<ProductPageProps>}) {
     const { id } = await params;
 
     const product = await fetchProductData(id);

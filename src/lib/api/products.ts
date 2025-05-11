@@ -1,9 +1,6 @@
 import {Product} from "@/types/product";
 
-function validateProductData(product: any): product is Product {
-    return product && typeof product === 'object' && typeof product.id === 'number';
-}
-
+const validateProductData = (product: Product) => product && typeof product === 'object';
 export async function fetchProductData(id: string): Promise<Product | null> {
     try {
         const response = await fetch(`https://fakestoreapi.com/products/${id}`, {

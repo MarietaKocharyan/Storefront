@@ -1,10 +1,11 @@
+import Image from 'next/image';
 import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
-
 export const runtime = 'edge';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    const { id } = params;
+export async function GET(req: NextRequest) {
+    const url = new URL(req.url)
+    const id = url.pathname.split('/').pop()
 
     const productRes = await fetch(`https://fakestoreapi.com/products/${id}`);
     if (!productRes.ok) {
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
                     textAlign: 'center',
                 }}
             >
-                <img
+                <Image
                     width={300}
                     height={300}
                     src={product.image}
