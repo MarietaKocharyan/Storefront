@@ -1,38 +1,18 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Product } from '@/types/product';
 
-interface ProductPageProps {
-    params: { id: string };
-}
-async function getProduct(id: string): Promise<Product | null> {
-    try {
-        const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
-            next: { revalidate: 60 }, // Optional: revalidate every 60 seconds
-        });
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
+import {ProductPageProps} from "@/types/product";
+import {fetchProductData} from "@/lib/api/products";
 
-        if (!res.ok) {
-            console.warn(`Failed to fetch product ${id}: ${res.status} ${res.statusText}`);
-            return null;
-        }
+async function generateMetadata({ params }: ProductPageProps) {
+    const product = await fetchProductData(params.id);
 
-        const product = await res.json();
-
-        if (!product || typeof product !== 'object' || !product.id) {
-            console.warn(`Invalid product data for ID ${id}`);
-            return null;
-        }
-
-        return product;
-    } catch (err) {
-        console.error(`Error fetching product ${id}:`, err);
-        return null;
-    }
-}
-
-export async function generateMetadata({ params }: ProductPageProps) {
-    const product = await getProduct(params.id);
     if (!product) return {};
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
 
     return {
         title: `${product.title} | Fake Store`,
@@ -42,7 +22,7 @@ export async function generateMetadata({ params }: ProductPageProps) {
             description: product.description,
             images: [
                 {
-                    url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/og/${params.id}`,
+                    url: `${baseUrl}/api/og/${params.id}`,
                     width: 1200,
                     height: 630,
                 },
@@ -52,26 +32,37 @@ export async function generateMetadata({ params }: ProductPageProps) {
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-    const product = await getProduct(params.id);
-    if (!product) return notFound();
+    const { id } = await params;
 
+    const product = await fetchProductData(id);
+
+    if (!product) return notFound();
 
     return (
         <main className="p-6 max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-6">
-                <Image
-                    src={product.image}
-                    alt={product.title}
-                    width={500}
-                    height={500}
-                    className="object-contain max-h-[400px] w-full"
-                />
-                <div>
-                    <h1 className="text-2xl font-bold mb-4">{product.title}</h1>
-                    <p className="text-green-600 text-xl font-semibold mb-2">${product.price}</p>
-                    <p className="text-gray-700 mb-4">{product.description}</p>
+            <Card className="grid md:grid-cols-2 gap-6 p-4">
+                <div className="flex items-center justify-center">
+                    <Image
+                        width={500}
+                        height={500}
+                        src={product.image}
+                        alt={product.title}
+                        className="object-contain max-h-[400px] w-full"
+                    />
                 </div>
-            </div>
+
+                <div>
+                    <CardHeader>
+                        <CardTitle className="text-2xl">{product.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-green-600 text-xl font-semibold">${product.price}</p>
+                        <Separator />
+                        <p className="text-muted-foreground">{product.description}</p>
+                        <Button className="w-full mt-4">Add to Cart</Button>
+                    </CardContent>
+                </div>
+            </Card>
         </main>
     );
 }

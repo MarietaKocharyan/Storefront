@@ -1,6 +1,5 @@
 import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
-import Image from "next/image";
 
 export const runtime = 'edge';
 
@@ -31,9 +30,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
                 }}
             >
                 <img
-                    src={product.image}
                     width={300}
                     height={300}
+                    src={product.image}
+                    alt={product.title}
                     style={{ objectFit: 'contain', marginBottom: '20px' }}
                 />
                 <strong style={{ fontSize: 40 }}>{product.title}</strong>

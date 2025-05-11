@@ -6,3 +6,7 @@ export interface Product {
     category: string;
     description: string;
 }
+
+export type ProductPageProps  ={
+    params: { id: string };
+}
