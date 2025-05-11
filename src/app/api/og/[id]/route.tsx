@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { ImageResponse } from '@vercel/og';
 import { NextRequest } from 'next/server';
+
+import {Card} from "@/components/ui/card";
 export const runtime = 'edge';
 
 export async function GET(req: NextRequest) {
@@ -16,20 +18,7 @@ export async function GET(req: NextRequest) {
 
     return new ImageResponse(
         (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 36,
-                    width: '100%',
-                    height: '100%',
-                    background: 'white',
-                    padding: '40px',
-                    textAlign: 'center',
-                }}
-            >
+            <Card>
                 <Image
                     width={300}
                     height={300}
@@ -39,7 +28,7 @@ export async function GET(req: NextRequest) {
                 />
                 <strong style={{ fontSize: 40 }}>{product.title}</strong>
                 <span style={{ fontSize: 28, color: 'gray' }}>${product.price}</span>
-            </div>
+            </Card>
         ),
         {
             width: 1200,
